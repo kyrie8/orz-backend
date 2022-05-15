@@ -29,6 +29,7 @@
 ## Installation
 
 ```bash
+$ Create an env file on the root path
 $ npm install
 ```
 
