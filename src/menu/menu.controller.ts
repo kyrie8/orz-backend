@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
+import { FindMenuDto } from './dto/find-menu.dto';
 
 @Controller('menu')
 export class MenuController {
@@ -9,12 +19,13 @@ export class MenuController {
 
   @Post()
   create(@Body() createMenuDto: CreateMenuDto) {
+    console.log('co', createMenuDto);
     return this.menuService.create(createMenuDto);
   }
 
   @Get()
-  findAll() {
-    return this.menuService.findAll();
+  findAll(@Query() query: FindMenuDto) {
+    return this.menuService.findAll(query);
   }
 
   @Get(':id')

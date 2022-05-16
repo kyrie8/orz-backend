@@ -12,6 +12,7 @@ import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { FindRoleDto } from './dto/find-role.dto';
+import { EntityManager, Transaction, TransactionManager } from 'typeorm';
 
 @Controller('role')
 export class RoleController {
@@ -32,12 +33,21 @@ export class RoleController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.roleService.update(+id, updateRoleDto);
+  @Transaction()
+  update(
+    @Param('id') id: string,
+    @Body() updateRoleDto: UpdateRoleDto,
+    @TransactionManager() maneger: EntityManager,
+  ) {
+    return this.roleService.update(+id, updateRoleDto, maneger);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.roleService.remove(+id);
+  @Transaction()
+  remove(
+    @Param('id') id: string,
+    @TransactionManager() maneger: EntityManager,
+  ) {
+    return this.roleService.remove(+id, maneger);
   }
 }

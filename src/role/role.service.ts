@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Menu } from 'src/menu/entities/menu.entity';
+import { MenuService } from 'src/menu/menu.service';
+import { EntityManager, Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { FindRoleDto } from './dto/find-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -11,9 +13,10 @@ export class RoleService {
   constructor(
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
+    private menuService: MenuService,
   ) {}
   async create(createRoleDto: CreateRoleDto) {
-    const { role_name } = createRoleDto;
+    const { role_name, menu_id } = createRoleDto;
     const has_name = await this.roleRepository.findOne({
       where: { role_name },
     });
@@ -21,6 +24,10 @@ export class RoleService {
       throw new HttpException('角色名已存在', HttpStatus.BAD_REQUEST);
     }
     const new_role = await this.roleRepository.create(createRoleDto);
+    if (menu_id) {
+      const menus = await this.menuService.findByIds(menu_id.split(','));
+      new_role.menus = menus;
+    }
     return this.roleRepository.save(new_role);
   }
 
@@ -41,16 +48,37 @@ export class RoleService {
   }
 
   async findOne(id: number) {
-    return await this.roleRepository.findOne({
-      where: { role_id: id },
+    const role = await this.roleRepository
+      .createQueryBuilder('role')
+      .leftJoinAndSelect('role.menus', 'menu')
+      .where('role.role_id=:role_id', { role_id: id })
+      .getOne();
+    if (!role) {
+      throw new HttpException('角色不存在', HttpStatus.BAD_REQUEST);
+    }
+    return { list: role };
+  }
+
+  async update(
+    role_id: number,
+    updateRoleDto: UpdateRoleDto,
+    maneger: EntityManager,
+  ) {
+    const role = await this.roleRepository.findOne({
+      where: { role_id },
     });
+    if (!role) {
+      throw new HttpException('角色不存在', HttpStatus.BAD_REQUEST);
+    }
+    const ids = updateRoleDto.menu_id.split(',');
+    const menus = await maneger.findByIds(Menu, ids);
+    const entity = new Role();
+    entity.role_id = role_id;
+    entity.menus = menus;
+    await maneger.save(entity);
   }
 
-  async update(id: number, updateRoleDto: UpdateRoleDto) {
-    return await this.roleRepository.update({ role_id: id }, updateRoleDto);
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  remove(id: number, maneger: EntityManager) {
+    return maneger.delete(Role, id);
   }
 }

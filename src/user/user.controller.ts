@@ -9,16 +9,12 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Query,
-  UsePipes,
 } from '@nestjs/common';
 import { EntityManager, Transaction, TransactionManager } from 'typeorm';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { query } from 'express';
 import { FindUserDto } from './dto/find-user.dto';
-import { ValidationPipe } from 'src/validation/defalut.args';
-
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

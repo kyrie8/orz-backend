@@ -21,10 +21,10 @@ export class Menu {
   @Column()
   icon: string;
 
-  @Column('enum', { enum: [1, 0], default: 1 })
+  @Column({ default: 1 })
   type: number;
 
-  @Column('enum', { enum: [1, 0], default: 1 })
+  @Column({ default: 1 })
   is_out_link: number;
 
   @ManyToMany(() => Role, (role) => role.menus)
