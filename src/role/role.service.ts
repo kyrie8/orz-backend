@@ -81,4 +81,14 @@ export class RoleService {
   remove(id: number, maneger: EntityManager) {
     return maneger.delete(Role, id);
   }
+
+  //userMenu
+  async getMenu(id: number) {
+    const userMenu = await this.roleRepository
+      .createQueryBuilder('role')
+      .leftJoinAndSelect('role.menus', 'menu')
+      .where('role.role_id=:role_id', { role_id: id })
+      .getOne();
+    return userMenu.menus;
+  }
 }

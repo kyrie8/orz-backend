@@ -8,6 +8,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStorage } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
+import { RoleService } from 'src/role/role.service';
+import { Role } from 'src/role/entities/role.entity';
+import { MenuService } from 'src/menu/menu.service';
+import { Menu } from 'src/menu/entities/menu.entity';
 
 const jwtModule = JwtModule.registerAsync({
   imports: [ConfigModule],
@@ -22,8 +26,19 @@ const jwtModule = JwtModule.registerAsync({
 
 @Module({
   exports: [jwtModule],
-  imports: [TypeOrmModule.forFeature([User]), PassportModule, jwtModule],
+  imports: [
+    TypeOrmModule.forFeature([User, Role, Menu]),
+    PassportModule,
+    jwtModule,
+  ],
   controllers: [LoginController],
-  providers: [LoginService, LocalStorage, JwtStrategy, ConfigService],
+  providers: [
+    LoginService,
+    LocalStorage,
+    JwtStrategy,
+    ConfigService,
+    RoleService,
+    MenuService,
+  ],
 })
 export class LoginModule {}

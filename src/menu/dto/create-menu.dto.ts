@@ -11,7 +11,7 @@ export class CreateMenuDto {
   readonly parent_id: number;
 
   @ApiProperty({ description: '路径' })
-  @IsNotEmpty({ message: '路径不能空' })
+  @IsString()
   readonly path: string;
 
   @ApiProperty({ description: '组件' })
@@ -25,4 +25,8 @@ export class CreateMenuDto {
   @ApiProperty({ description: '是否是外链，默认不是' })
   @IsInt()
   readonly is_out_link: number;
+
+  @ApiProperty({ description: '1组件，0按钮' })
+  @IsInt()
+  readonly type: number;
 }

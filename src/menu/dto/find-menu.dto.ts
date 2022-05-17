@@ -9,4 +9,9 @@ export class FindMenuDto {
   @IsOptional()
   @IsPositive()
   readonly is_out_link: number;
+
+  @ApiProperty({ description: '是否是组件，默认是' })
+  @IsOptional()
+  @IsPositive()
+  readonly type: number;
 }

@@ -29,7 +29,6 @@ import { MenuModule } from './menu/menu.module';
         autoLoadEntities: true,
       }),
     }),
-    MenuModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -6,6 +6,19 @@ import { FindMenuDto } from './dto/find-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 import { Menu } from './entities/menu.entity';
 
+export interface menuStr {
+  menu_id: number;
+  parent_id: number;
+  menu_name: string;
+  path: string;
+  component: string;
+  icon: string;
+  type: number;
+  is_out_link: number;
+  createTime: any;
+  updateTime: any;
+}
+
 @Injectable()
 export class MenuService {
   constructor(
@@ -25,15 +38,44 @@ export class MenuService {
     return this.menuRepository.save(new_menu);
   }
 
+  //转成树形
+  getTreeList(data: menuStr[], child = [], parent_id: number) {
+    const list = child;
+    data.forEach((item) => {
+      if (item.parent_id === parent_id) {
+        list.push(item);
+      }
+    });
+    list.forEach((item) => {
+      item.children = [];
+      this.getTreeList(data, item.children, item.menu_id);
+      if (!item.children.length) {
+        delete item.children;
+      }
+    });
+    return list;
+  }
   async findAll(query: FindMenuDto) {
     const db = this.menuRepository.createQueryBuilder('menu');
     db.where(query);
-    const list = await db.getMany();
+    const data = await db.getMany();
+    const list = this.getTreeList(data, [], 0);
     return { list };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} menu`;
+  async findAuth() {
+    const db = this.menuRepository.createQueryBuilder('menu');
+    db.where({ type: 0 });
+    const data = await db.getMany();
+    return data;
+  }
+
+  async findOne(id: number) {
+    const menu = await this.menuRepository.findOne({ where: { menu_id: id } });
+    if (!menu) {
+      throw new HttpException('菜单不存在', HttpStatus.BAD_REQUEST);
+    }
+    return { list: menu };
   }
 
   async findByIds(ids: unknown[]) {
@@ -44,7 +86,32 @@ export class MenuService {
     return await this.menuRepository.update({ menu_id: id }, updateMenuDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} menu`;
+  async remove(id: string) {
+    const ids = id.split(',');
+    const menu = await this.menuRepository.findByIds(ids);
+    const allMenu = await this.menuRepository
+      .createQueryBuilder('menu')
+      .getMany();
+    const parent = menu.filter((item) => item.type === 1);
+    const child = menu.filter((item) => item.type === 0);
+    if (!child.length && !parent.length) {
+      throw new HttpException('数据不存在', HttpStatus.BAD_REQUEST);
+    }
+    let list = [];
+    if (parent.length) {
+      parent.forEach((item) => {
+        allMenu.forEach((v) => {
+          if (item.menu_id === v.parent_id) {
+            list.push(item.menu_id, v.menu_id);
+          }
+        });
+      });
+    }
+    if (child.length) {
+      child.forEach((item) => {
+        list = [...list, item.menu_id];
+      });
+    }
+    return await this.menuRepository.delete(list);
   }
 }
