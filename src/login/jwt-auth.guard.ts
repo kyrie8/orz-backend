@@ -2,7 +2,7 @@ import {
   Injectable,
   ExecutionContext,
   UnauthorizedException,
-  HttpException,
+  HttpException
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -10,15 +10,16 @@ import { AuthGuard } from '@nestjs/passport';
 export class JwtAuthGuard extends AuthGuard('jwt') {
   canActivate(context: ExecutionContext) {
     const ctx = context.switchToHttp();
-    const url = ctx.getRequest().url;
+    const req = ctx.getRequest();
+    const {url, user} = req
     if (url === '/login') return true;
     return super.canActivate(context);
   }
 
   handleRequest(err, user, info) {
-    //console.log('user', user);
+    console.log('user', user)
     if (info && !!info.expiredAt) {
-      throw new HttpException('token过期，请重新登录', 403);
+      throw new HttpException('token过期，请重新登录', 401);
     }
     if (err || !user) {
       throw new UnauthorizedException('token错误');

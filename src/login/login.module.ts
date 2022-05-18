@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, CACHE_MANAGER, Module } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { LoginController } from './login.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -30,6 +30,7 @@ const jwtModule = JwtModule.registerAsync({
     TypeOrmModule.forFeature([User, Role, Menu]),
     PassportModule,
     jwtModule,
+    CacheModule.register(),
   ],
   controllers: [LoginController],
   providers: [

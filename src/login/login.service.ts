@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MenuService, menuStr } from 'src/menu/menu.service';
@@ -18,6 +19,8 @@ export class LoginService {
     private userRepository: Repository<User>,
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
     private roleService: RoleService,
     private menuService: MenuService,
     private jwtService: JwtService,
@@ -38,31 +41,13 @@ export class LoginService {
     let authArray = [];
     let menuList = [];
     const { roles, user_id, username } = userInfo;
-    const token = this.createToken({
-      user_id,
-      username,
-    });
+    const token = this.createToken({user_id, username})
     if (roles.length) {
       //不能在foreach map filter等有回调的方法中使用await
-      // roles.forEach(async (item) => {
-      //   const userMenu = await this.roleRepository
-      //     .createQueryBuilder('role')
-      //     .leftJoinAndSelect('role.menus', 'menu')
-      //     .where('role.role_id=:role_id', { role_id: item.role_id })
-      //     .getOne();
-      //   list = [...list, ...userMenu.menus];
-      // });
-      // console.log('list', list);
-      // const data = this.filterArrObj(list);
-      // console.log('data', data);
       const role_length = roles.length;
       for (let index = 0; index < role_length; index++) {
-        const userMenu = await this.roleRepository
-          .createQueryBuilder('role')
-          .leftJoinAndSelect('role.menus', 'menu')
-          .where('role.role_id=:role_id', { role_id: roles[index].role_id })
-          .getOne();
-        list = [...list, ...userMenu.menus];
+        const userMenu = await this.roleService.getMenu(roles[index].role_id)
+        list = [...list, ...userMenu];
       }
       const { auth, treeMenus } = this.filterArrObj(list);
       authArray = auth;
@@ -71,6 +56,8 @@ export class LoginService {
     if (user_id === 1) {
       authArray.push('admin');
     }
+    //添加权限缓存
+    await this.cacheManager.set('auth', authArray, {ttl: 28800})
     return { token, user: userInfo, auth: authArray, menu: menuList };
   }
 
@@ -85,9 +72,6 @@ export class LoginService {
     const auth = [...map.values()]
       .filter((item) => item.type === 0)
       .map((item) => {
-        // const arr = [];
-        // arr.push(item.component);
-        // return arr;
         return item.component;
       });
     const treeMenus = this.menuService.getTreeList(menus, [], 0);

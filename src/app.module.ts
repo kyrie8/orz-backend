@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -7,14 +7,11 @@ import { LoginModule } from './login/login.module';
 import { RoleModule } from './role/role.module';
 import { UserModule } from './user/user.module';
 import { MenuModule } from './menu/menu.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './login/role.guard';
 
 @Module({
   imports: [
-    LoginModule,
-    UserModule,
-    RoleModule,
-    MenuModule,
-    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
@@ -29,6 +26,12 @@ import { MenuModule } from './menu/menu.module';
         autoLoadEntities: true,
       }),
     }),
+    ConfigModule.forRoot({ isGlobal: true }),
+    CacheModule.register(),
+    LoginModule,
+    UserModule,
+    RoleModule,
+    MenuModule
   ],
   controllers: [AppController],
   providers: [AppService],

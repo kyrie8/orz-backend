@@ -80,4 +80,9 @@ export class UserService {
   async remove(id: number, maneger: EntityManager) {
     await maneger.delete(User, id);
   }
+
+  //role del
+  // async role_delete(role_id: number) {
+  //   const user = await this.userRepository.findByIds()
+  // }
 }

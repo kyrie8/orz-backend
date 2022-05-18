@@ -1,12 +1,17 @@
 import {
+  CACHE_MANAGER,
   CanActivate,
   ExecutionContext,
+  HttpException,
+  HttpStatus,
+  Inject,
   Injectable,
   SetMetadata,
-  UnauthorizedException,
+  UnauthorizedException
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Cache } from 'cache-manager';
 import { Reflector } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
 
 export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 
@@ -14,24 +19,29 @@ export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 export class RolesGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly jwtService: JwtService,
+    //private readonly jwtService: JwtService,
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
   ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const roles = this.reflector.get('roles', context.getHandler());
     if (!roles) {
       return true;
     }
-
+    console.log('roles', roles)
     const req = context.switchToHttp().getRequest();
-    const user = req.user;
+    const auth: string[] = await this.cacheManager.get('auth')
+    //console.log('req',req)
+    const {user, url, method} = req;
+    console.log('user', user)
     if (!user) {
-      return false;
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
     }
-    const hasRoles = roles.some((role) => role === user.role);
-    if (!hasRoles) {
-      throw new UnauthorizedException('您没有权限');
+    if (['/role', '/user'].includes(url) && (['PATCH', 'DELETE'].includes(method))) {
+      //不让修改和删除
+      throw new UnauthorizedException('没有权限')
     }
-    return hasRoles;
+    return auth.some(item => roles.includes(item));
   }
 }

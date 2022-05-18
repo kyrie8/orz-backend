@@ -1,3 +1,4 @@
+import { RolesGuard } from './../login/role.guard';
 import {
   Controller,
   Get,
@@ -9,12 +10,14 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { EntityManager, Transaction, TransactionManager } from 'typeorm';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUserDto } from './dto/find-user.dto';
+import { Roles } from 'src/login/role.guard';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -27,18 +30,23 @@ export class UserController {
   }
 
   @Get()
+  @Roles('user:view')
+  @UseGuards(RolesGuard)
   //@UsePipes(new ValidationPipe())
   findAll(@Query() query: FindUserDto) {
-    console.log('query', query);
     return this.userService.findAll(query);
   }
 
   @Get(':id')
+  @Roles('user:view')
+  @UseGuards(RolesGuard)
   findOne(@Param('id') id: number) {
     return this.userService.findOne(+id);
   }
 
   @Patch(':id')
+  @Roles('user:edit')
+  @UseGuards(RolesGuard)
   @Transaction()
   update(
     @Param('id') id: number,
@@ -50,6 +58,8 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Roles('user:delete')
+  @UseGuards(RolesGuard)
   @Transaction()
   remove(
     @Param('id') id: string,

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,7 +9,7 @@ import { MenuService } from 'src/menu/menu.service';
 import { Menu } from 'src/menu/entities/menu.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Role, Menu])],
+  imports: [TypeOrmModule.forFeature([User, Role, Menu]),CacheModule.register()],
   controllers: [UserController],
   providers: [UserService, RoleService, MenuService],
   exports: [UserService],
