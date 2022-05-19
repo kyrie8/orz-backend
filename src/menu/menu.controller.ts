@@ -14,6 +14,7 @@ import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 import { FindMenuDto } from './dto/find-menu.dto';
 import { Roles, RolesGuard } from 'src/login/role.guard';
+import { EntityManager, Transaction, TransactionManager } from 'typeorm';
 
 @Controller('menu')
 export class MenuController {
@@ -51,7 +52,11 @@ export class MenuController {
   @Delete(':id')
   @Roles('menu:delete')
   @UseGuards(RolesGuard)
-  remove(@Param('id') id: string) {
-    return this.menuService.remove(id);
+  @Transaction()
+  remove(
+    @Param('id') id: string,
+    @TransactionManager() maneger: EntityManager,
+  ) {
+    return this.menuService.remove(id, maneger);
   }
 }

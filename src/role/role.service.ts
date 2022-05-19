@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Menu } from 'src/menu/entities/menu.entity';
 import { MenuService } from 'src/menu/menu.service';
+import { User } from 'src/user/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { FindRoleDto } from './dto/find-role.dto';
@@ -78,14 +79,33 @@ export class RoleService {
     await maneger.save(entity);
   }
 
-  //有问题
-  async remove(role_id: number, maneger: EntityManager) {
-    // const role = await this.roleRepository
-    //   .createQueryBuilder('role')
-    //   .leftJoinAndSelect('role.users', 'user');
-    // console.log('role', role)
-    // return role
-    await maneger.delete(Role, role_id);
+  async remove(role_id: string, maneger: EntityManager) {
+    const ids: any[] = role_id.split(',');
+    const db = await maneger.findByIds(Role, ids, {
+      relations: ['users'],
+    });
+    console.log('db', db);
+    const user_id = [];
+    if (db.length) {
+      db.forEach((item) => {
+        item.users.forEach((ele) => {
+          if (!user_id.includes(ele.user_id)) {
+            user_id.push(ele.user_id);
+          }
+        });
+      });
+    }
+    if (user_id.length) {
+      const len = user_id.length;
+      const entity = new User();
+      for (let index = 0; index < len; index++) {
+        entity.user_id = user_id[index];
+        entity.roles = [];
+        await maneger.save(entity);
+      }
+    }
+    await maneger.delete(Role, ids);
+    //return { list: db };
   }
 
   //userMenu

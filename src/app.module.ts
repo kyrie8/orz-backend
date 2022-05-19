@@ -7,8 +7,7 @@ import { LoginModule } from './login/login.module';
 import { RoleModule } from './role/role.module';
 import { UserModule } from './user/user.module';
 import { MenuModule } from './menu/menu.module';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './login/role.guard';
+import { DeptModule } from './dept/dept.module';
 
 @Module({
   imports: [
@@ -31,7 +30,8 @@ import { RolesGuard } from './login/role.guard';
     LoginModule,
     UserModule,
     RoleModule,
-    MenuModule
+    MenuModule,
+    DeptModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Role } from 'src/role/entities/role.entity';
+import { EntityManager, Repository } from 'typeorm';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { FindMenuDto } from './dto/find-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
@@ -86,32 +87,54 @@ export class MenuService {
     return await this.menuRepository.update({ menu_id: id }, updateMenuDto);
   }
 
-  async remove(id: string) {
+  async remove(id: string, maneger: EntityManager) {
     const ids = id.split(',');
-    const menu = await this.menuRepository.findByIds(ids);
-    const allMenu = await this.menuRepository
-      .createQueryBuilder('menu')
-      .getMany();
-    const parent = menu.filter((item) => item.type === 1);
-    const child = menu.filter((item) => item.type === 0);
-    if (!child.length && !parent.length) {
-      throw new HttpException('数据不存在', HttpStatus.BAD_REQUEST);
-    }
-    let list = [];
-    if (parent.length) {
-      parent.forEach((item) => {
-        allMenu.forEach((v) => {
-          if (item.menu_id === v.parent_id) {
-            list.push(item.menu_id, v.menu_id);
+    // const menu = await this.menuRepository.findByIds(ids);
+    // const allMenu = await this.menuRepository
+    //   .createQueryBuilder('menu')
+    //   .getMany();
+    // const parent = menu.filter((item) => item.type === 1);
+    // const child = menu.filter((item) => item.type === 0);
+    // if (!child.length && !parent.length) {
+    //   throw new HttpException('数据不存在', HttpStatus.BAD_REQUEST);
+    // }
+    // let list = [];
+    // if (parent.length) {
+    //   parent.forEach((item) => {
+    //     allMenu.forEach((v) => {
+    //       if (item.menu_id === v.parent_id) {
+    //         list.push(item.menu_id, v.menu_id);
+    //       }
+    //     });
+    //   });
+    // }
+    // if (child.length) {
+    //   child.forEach((item) => {
+    //     list = [...list, item.menu_id];
+    //   });
+    // }
+    const db = await maneger.findByIds(Menu, ids, {
+      relations: ['roles'],
+    });
+    const role_id = [];
+    if (db.length) {
+      db.forEach((item) => {
+        item.roles.forEach((ele) => {
+          if (!role_id.includes(ele.role_id)) {
+            role_id.push(ele.role_id);
           }
         });
       });
     }
-    if (child.length) {
-      child.forEach((item) => {
-        list = [...list, item.menu_id];
-      });
+    if (role_id.length) {
+      const len = role_id.length;
+      const entity = new Role();
+      for (let index = 0; index < len; index++) {
+        entity.role_id = role_id[index];
+        entity.menus = [];
+        await maneger.save(entity);
+      }
     }
-    return await this.menuRepository.delete(list);
+    await maneger.delete(Menu, ids);
   }
 }

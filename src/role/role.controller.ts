@@ -54,11 +54,12 @@ export class RoleController {
 
   @Delete(':id')
   @Roles('role:delete')
+  @UseGuards(RolesGuard)
   @Transaction()
   remove(
     @Param('id') id: string,
     @TransactionManager() maneger: EntityManager,
   ) {
-    return this.roleService.remove(+id, maneger);
+    return this.roleService.remove(id, maneger);
   }
 }

@@ -9,7 +9,10 @@ import { MenuService } from 'src/menu/menu.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Role, User, Menu]), CacheModule.register()],
+  imports: [
+    TypeOrmModule.forFeature([Role, User, Menu]),
+    CacheModule.register(),
+  ],
   controllers: [RoleController],
   providers: [RoleService, MenuService],
   exports: [RoleService],

@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Role } from 'src/role/entities/role.entity';
+import { Dept } from 'src/dept/entities/dept.entity';
 
 @Entity('User')
 export class User {
@@ -59,6 +60,9 @@ export class User {
     inverseJoinColumns: [{ name: 'role_id' }], // 中间表 副表 字段
   })
   roles: Role[];
+
+  @ManyToOne(() => Dept, (dept) => dept.users)
+  dept: Dept;
 
   @BeforeInsert()
   async encryptPwd() {

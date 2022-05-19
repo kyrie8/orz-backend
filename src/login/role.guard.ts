@@ -7,7 +7,7 @@ import {
   Inject,
   Injectable,
   SetMetadata,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { Reflector } from '@nestjs/core';
@@ -29,19 +29,19 @@ export class RolesGuard implements CanActivate {
     if (!roles) {
       return true;
     }
-    console.log('roles', roles)
+    console.log('roles', roles);
     const req = context.switchToHttp().getRequest();
-    const auth: string[] = await this.cacheManager.get('auth')
+    const auth: string[] = await this.cacheManager.get('auth');
     //console.log('req',req)
-    const {user, url, method} = req;
-    console.log('user', user)
+    const { user, url, method } = req;
+    console.log('user', user);
     if (!user) {
       throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
     }
-    if (['/role', '/user'].includes(url) && (['PATCH', 'DELETE'].includes(method))) {
+    if (!auth.includes('admin')) {
       //不让修改和删除
-      throw new UnauthorizedException('没有权限')
+      throw new UnauthorizedException('没有权限');
     }
-    return auth.some(item => roles.includes(item));
+    return auth.some((item) => roles.includes(item));
   }
 }

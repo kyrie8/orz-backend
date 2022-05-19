@@ -9,7 +9,10 @@ import { RoleService } from 'src/role/role.service';
 import { UserService } from 'src/user/user.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Role, User, Menu]), CacheModule.register()],
+  imports: [
+    TypeOrmModule.forFeature([Role, User, Menu]),
+    CacheModule.register(),
+  ],
   controllers: [MenuController],
   providers: [MenuService, RoleService, UserService],
   exports: [MenuService],

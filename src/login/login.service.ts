@@ -41,12 +41,12 @@ export class LoginService {
     let authArray = [];
     let menuList = [];
     const { roles, user_id, username } = userInfo;
-    const token = this.createToken({user_id, username})
+    const token = this.createToken({ user_id, username });
     if (roles.length) {
       //不能在foreach map filter等有回调的方法中使用await
       const role_length = roles.length;
       for (let index = 0; index < role_length; index++) {
-        const userMenu = await this.roleService.getMenu(roles[index].role_id)
+        const userMenu = await this.roleService.getMenu(roles[index].role_id);
         list = [...list, ...userMenu];
       }
       const { auth, treeMenus } = this.filterArrObj(list);
@@ -57,7 +57,7 @@ export class LoginService {
       authArray.push('admin');
     }
     //添加权限缓存
-    await this.cacheManager.set('auth', authArray, {ttl: 28800})
+    await this.cacheManager.set('auth', authArray, { ttl: 28800 });
     return { token, user: userInfo, auth: authArray, menu: menuList };
   }
 

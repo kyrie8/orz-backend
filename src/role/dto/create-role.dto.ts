@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateRoleDto {
   @ApiProperty({ description: '角色名称' })
@@ -11,6 +11,7 @@ export class CreateRoleDto {
   readonly remark: string;
 
   @ApiProperty({ description: '权限数据ID' })
+  @IsOptional()
   @IsString()
   readonly menu_id: string;
 }
