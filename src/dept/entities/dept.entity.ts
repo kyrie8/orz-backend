@@ -12,6 +12,9 @@ export class Dept {
   @Column()
   remark: string;
 
+  @Column()
+  name: string;
+
   @Column({
     name: 'create_time',
     type: 'timestamp',

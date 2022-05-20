@@ -7,6 +7,7 @@ export class CreateRoleDto {
   readonly role_name: string;
 
   @ApiProperty({ description: '描述' })
+  @IsOptional()
   @IsString()
   readonly remark: string;
 

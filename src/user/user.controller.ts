@@ -25,7 +25,6 @@ export class UserController {
   @Post()
   @UseInterceptors(ClassSerializerInterceptor) //序列化参数
   create(@Body() createUserDto: CreateUserDto) {
-    console.log('createUserDto', createUserDto);
     return this.userService.create(createUserDto);
   }
 

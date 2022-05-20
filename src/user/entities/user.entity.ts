@@ -3,6 +3,7 @@ import {
   BeforeInsert,
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -62,6 +63,9 @@ export class User {
   roles: Role[];
 
   @ManyToOne(() => Dept, (dept) => dept.users)
+  @JoinColumn({
+    name: 'dept_id',
+  })
   dept: Dept;
 
   @BeforeInsert()

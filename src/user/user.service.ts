@@ -23,7 +23,7 @@ export class UserService {
     if (user) {
       throw new HttpException('用户名已存在', HttpStatus.BAD_REQUEST);
     }
-    const newUser = await this.userRepository.create(createUserDto);
+    const newUser = this.userRepository.create(createUserDto);
     if (role_id) {
       const roles = await this.roleService.findByIds(role_id.split(','));
       newUser.roles = roles;
@@ -34,7 +34,7 @@ export class UserService {
   async findAll(query: FindUserDto) {
     const { page_size = 10, page_num = 1, ...params } = query;
     console.log(params);
-    const users = await this.userRepository
+    const users = this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.roles', 'role');
     users.where(params);

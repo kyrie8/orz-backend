@@ -3,6 +3,7 @@ import {
   IsEmail,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -17,6 +18,7 @@ export class CreateUserDto {
   readonly password: string;
 
   @ApiProperty({ description: '邮箱' })
+  @IsOptional()
   @IsEmail()
   readonly email: string;
 
@@ -37,4 +39,9 @@ export class CreateUserDto {
   @ApiProperty({ description: '角色' })
   @IsString()
   readonly role_id: string;
+
+  @ApiProperty({ description: '部门' })
+  @IsOptional()
+  @IsNumber()
+  readonly dept_id: number;
 }

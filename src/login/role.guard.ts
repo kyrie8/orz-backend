@@ -29,16 +29,14 @@ export class RolesGuard implements CanActivate {
     if (!roles) {
       return true;
     }
-    console.log('roles', roles);
     const req = context.switchToHttp().getRequest();
     const auth: string[] = await this.cacheManager.get('auth');
     //console.log('req',req)
     const { user, url, method } = req;
-    console.log('user', user);
     if (!user) {
       throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
     }
-    if (!auth.includes('admin')) {
+    if (!auth.includes('admin') && ['/role', '/user'].includes(url) && ['PATCH', 'DELETE'].includes(method)) {
       //不让修改和删除
       throw new UnauthorizedException('没有权限');
     }
