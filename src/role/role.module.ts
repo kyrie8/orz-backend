@@ -7,14 +7,17 @@ import { User } from 'src/user/entities/user.entity';
 import { Menu } from 'src/menu/entities/menu.entity';
 import { MenuService } from 'src/menu/menu.service';
 import { JwtService } from '@nestjs/jwt';
+import { Dept } from 'src/dept/entities/dept.entity';
+import { DeptService } from 'src/dept/dept.service';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Role, User, Menu]),
+    TypeOrmModule.forFeature([Role, User, Menu, Dept]),
     CacheModule.register(),
   ],
   controllers: [RoleController],
-  providers: [RoleService, MenuService],
+  providers: [RoleService, MenuService, DeptService, UserService],
   exports: [RoleService],
 })
 export class RoleModule {}

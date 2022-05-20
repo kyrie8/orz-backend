@@ -29,7 +29,7 @@ export class User {
   @Column({ default: null })
   avatar: string; //头像
 
-  @Column('enum', { enum: [1, 0], default: 1 })
+  @Column({ default: 1 })
   status: number;
 
   @Column({ default: null })

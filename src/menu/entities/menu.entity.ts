@@ -24,7 +24,7 @@ export class Menu {
   @Column({ default: 1 })
   type: number;
 
-  @Column({ default: 1 })
+  @Column({ default: 0 })
   is_out_link: number;
 
   @ManyToMany(() => Role, (role) => role.menus)

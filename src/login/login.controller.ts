@@ -15,6 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 @Controller('login')
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
+
   @UseGuards(AuthGuard('local'))
   @UseInterceptors(ClassSerializerInterceptor) //序列化参数
   @Post()

@@ -15,11 +15,15 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { FindRoleDto } from './dto/find-role.dto';
 import { EntityManager, Transaction, TransactionManager } from 'typeorm';
 import { Roles, RolesGuard } from 'src/login/role.guard';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('角色')
 @Controller('role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
   @Post()
+  @ApiOperation({ summary: '角色添加' })
+  @ApiBearerAuth()
   @Roles('role:add')
   @UseGuards(RolesGuard)
   create(@Body() createRoleDto: CreateRoleDto) {
@@ -27,6 +31,8 @@ export class RoleController {
   }
 
   @Get()
+  @ApiOperation({ summary: '角色查找（全部）' })
+  @ApiBearerAuth()
   @Roles('role:view')
   @UseGuards(RolesGuard)
   findAll(@Query() query: FindRoleDto) {
@@ -34,6 +40,8 @@ export class RoleController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: '角色查找' })
+  @ApiBearerAuth()
   @Roles('role:view')
   @UseGuards(RolesGuard)
   findOne(@Param('id') id: string) {
@@ -41,6 +49,8 @@ export class RoleController {
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: '角色编辑' })
+  @ApiBearerAuth()
   @Roles('role:edit')
   @UseGuards(RolesGuard)
   @Transaction()
@@ -53,6 +63,8 @@ export class RoleController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: '角色删除' })
+  @ApiBearerAuth()
   @Roles('role:delete')
   @UseGuards(RolesGuard)
   @Transaction()

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Menu } from 'src/menu/entities/menu.entity';
 import { MenuService } from 'src/menu/menu.service';
 import { User } from 'src/user/entities/user.entity';
+import { UserService } from 'src/user/user.service';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { FindRoleDto } from './dto/find-role.dto';
@@ -76,6 +77,7 @@ export class RoleService {
     const entity = new Role();
     entity.role_id = role_id;
     entity.menus = menus;
+    maneger.merge(Role, entity, { ...updateRoleDto });
     await maneger.save(entity);
   }
 

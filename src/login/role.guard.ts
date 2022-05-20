@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
 
 export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 
@@ -19,7 +18,6 @@ export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 export class RolesGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    //private readonly jwtService: JwtService,
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
   ) {}
@@ -32,14 +30,25 @@ export class RolesGuard implements CanActivate {
     const req = context.switchToHttp().getRequest();
     const auth: string[] = await this.cacheManager.get('auth');
     //console.log('req',req)
+    console.log(auth);
     const { user, url, method } = req;
+    const reg = /^\role|user/g;
+    console.log(reg.test(url));
+    console.log('url', url, method);
     if (!user) {
       throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
     }
-    if (!auth.includes('admin') && ['/role', '/user'].includes(url) && ['PATCH', 'DELETE'].includes(method)) {
+    const isAuth = auth.some((item) => roles.includes(item));
+    if (
+      (!auth.includes('admin') &&
+        reg.test(url) &&
+        ['PATCH', 'DELETE'].includes(method)) ||
+      !isAuth
+    ) {
+      console.log(111);
       //不让修改和删除
       throw new UnauthorizedException('没有权限');
     }
-    return auth.some((item) => roles.includes(item));
+    return true;
   }
 }

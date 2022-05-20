@@ -87,32 +87,9 @@ export class MenuService {
     return await this.menuRepository.update({ menu_id: id }, updateMenuDto);
   }
 
+  //若删除的父级，应该把子级删除？
   async remove(id: string, maneger: EntityManager) {
     const ids = id.split(',');
-    // const menu = await this.menuRepository.findByIds(ids);
-    // const allMenu = await this.menuRepository
-    //   .createQueryBuilder('menu')
-    //   .getMany();
-    // const parent = menu.filter((item) => item.type === 1);
-    // const child = menu.filter((item) => item.type === 0);
-    // if (!child.length && !parent.length) {
-    //   throw new HttpException('数据不存在', HttpStatus.BAD_REQUEST);
-    // }
-    // let list = [];
-    // if (parent.length) {
-    //   parent.forEach((item) => {
-    //     allMenu.forEach((v) => {
-    //       if (item.menu_id === v.parent_id) {
-    //         list.push(item.menu_id, v.menu_id);
-    //       }
-    //     });
-    //   });
-    // }
-    // if (child.length) {
-    //   child.forEach((item) => {
-    //     list = [...list, item.menu_id];
-    //   });
-    // }
     const db = await maneger.findByIds(Menu, ids, {
       relations: ['roles'],
     });
