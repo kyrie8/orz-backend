@@ -1,6 +1,7 @@
 import { Role } from 'src/role/entities/role.entity';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
+//需要添加是否隐藏的字段
 @Entity('Menu')
 export class Menu {
   @PrimaryGeneratedColumn()

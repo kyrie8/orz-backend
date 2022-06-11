@@ -63,12 +63,24 @@ export class LoginService {
 
   filterArrObj(data: menuStr[]): IAuthMenu {
     const map = new Map();
+    const menus = [];
     for (const item of data) {
       if (!map.has(item.menu_id)) {
         map.set(item.menu_id, item);
       }
     }
-    const menus = [...map.values()].filter((item) => item.type === 1);
+    [...map.values()].forEach((item) => {
+      const obj = {};
+      Object.keys(item)
+        .filter((ele) => !['createTime', 'updateTime'].includes(ele))
+        .forEach((key) => {
+          if (item.type === 1) {
+            obj[key] = item[key];
+          }
+        });
+      menus.push(obj);
+    });
+    //const menus = [...map.values()].filter((item) => item.type === 1);
     const auth = [...map.values()]
       .filter((item) => item.type === 0)
       .map((item) => {
