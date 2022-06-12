@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateMenuDto {
   @ApiProperty({ description: '菜单名称' })
@@ -28,6 +34,10 @@ export class CreateMenuDto {
   @ApiProperty({ description: '是否是外链，默认不是' })
   @IsInt()
   readonly is_out_link: number;
+
+  @ApiProperty({ description: '是否隐藏，默认不是' })
+  @IsBoolean()
+  readonly hidden: boolean;
 
   @ApiProperty({ description: '1组件，0按钮' })
   @IsInt()

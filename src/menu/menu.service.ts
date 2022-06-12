@@ -16,6 +16,7 @@ export interface menuStr {
   icon: string;
   type: number;
   is_out_link: number;
+  hidden: boolean;
   createTime: any;
   updateTime: any;
 }

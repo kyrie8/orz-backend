@@ -28,6 +28,9 @@ export class Menu {
   @Column({ default: 0 })
   is_out_link: number;
 
+  @Column({ default: false })
+  hidden: boolean;
+
   @ManyToMany(() => Role, (role) => role.menus)
   roles: Role[];
 

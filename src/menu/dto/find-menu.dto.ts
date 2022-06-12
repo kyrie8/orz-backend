@@ -14,4 +14,9 @@ export class FindMenuDto {
   @IsOptional()
   @IsPositive()
   readonly type: number;
+
+  @ApiProperty({ description: '是否隐藏' })
+  @IsOptional()
+  @IsPositive()
+  readonly hidden: boolean;
 }
