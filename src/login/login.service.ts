@@ -1,4 +1,10 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -40,7 +46,10 @@ export class LoginService {
     let list = [];
     let authArray = [];
     let menuList = [];
-    const { roles, user_id, username } = userInfo;
+    const { roles, user_id, username, status } = userInfo;
+    if (!status) {
+      throw new HttpException('用户已停用', HttpStatus.BAD_REQUEST);
+    }
     const token = this.createToken({ user_id, username });
     if (roles.length) {
       //不能在foreach map filter等有回调的方法中使用await
