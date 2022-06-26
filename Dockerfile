@@ -24,3 +24,5 @@ EXPOSE 3000
 
 # 容器启动时执行的命令，类似npm run start
 CMD ["node", "/home/nestjs/dist/main.js"]
+
+#这docker file写的不好，要重写的
