@@ -37,6 +37,7 @@ export class RoleService {
     const { page_size = 10, page_num = 1, ...params } = query;
     const db = this.roleRepository.createQueryBuilder('role');
     db.where(params);
+    db.orderBy('update_time', 'DESC');
     db.skip(page_size * (page_num - 1));
     db.take(page_size);
     const total = await db.getCount();
