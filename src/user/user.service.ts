@@ -94,6 +94,14 @@ export class UserService {
   }
 
   async remove(id: number, maneger: EntityManager) {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.roles', 'role')
+      .where('user.user_id=:user_id', { user_id: id })
+      .getOne();
+    if (!user) {
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
+    }
     await maneger.delete(User, id);
   }
 

@@ -19,10 +19,10 @@ RUN npm run build
 ENV HOST 0.0.0.0
 ENV PORT 3000
 
-# 容器对外暴露的端口号(笔者的nestjs运行的端口号是3000)
+# 容器对外暴露的端口号
 EXPOSE 3000
 
 # 容器启动时执行的命令，类似npm run start
 CMD ["node", "/home/nestjs/dist/main.js"]
 
-#这docker file写的不好，要重写的
+#这dockerfile要重写的

@@ -28,13 +28,21 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const req = context.switchToHttp().getRequest();
-    const auth: string[] = await this.cacheManager.get('auth');
-    //console.log('req',req)
-    console.log(auth);
-    const { user, url, method } = req;
-    const reg = /^\role|user/g;
-    console.log(reg.test(url));
-    console.log('url', url, method);
+    const auth: string[] = (await this.cacheManager.get('auth')) || [];
+    console.log('req', req);
+    const {
+      user,
+      url,
+      method,
+      params: { id },
+    } = req;
+
+    const reg = /\/(user|role)\/\d/g;
+    const reg2 = /\/user\/\d/g;
+    if (+id === user.user_id && reg2.test(url) && 'DELETE' === method) {
+      console.log(1111, user);
+      throw new HttpException('不可以删除自己', HttpStatus.BAD_REQUEST);
+    }
     if (!user) {
       throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
     }
