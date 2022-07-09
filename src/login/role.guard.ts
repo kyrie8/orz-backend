@@ -29,7 +29,6 @@ export class RolesGuard implements CanActivate {
     }
     const req = context.switchToHttp().getRequest();
     const auth: string[] = (await this.cacheManager.get('auth')) || [];
-    console.log('req', req);
     const {
       user,
       url,
@@ -53,7 +52,6 @@ export class RolesGuard implements CanActivate {
         ['PATCH', 'DELETE'].includes(method)) ||
       !isAuth
     ) {
-      console.log(111);
       //不让修改和删除
       throw new UnauthorizedException('没有权限');
     }

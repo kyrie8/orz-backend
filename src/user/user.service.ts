@@ -44,8 +44,8 @@ export class UserService {
     console.log(params);
     const users = this.userRepository
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.roles', 'role')
-      .orderBy('update_time', 'DESC');
+      .orderBy('user.updateTime', 'DESC')
+      .leftJoinAndSelect('user.roles', 'role');
     users.where(params);
     users.skip(page_size * (page_num - 1));
     users.take(page_size);
