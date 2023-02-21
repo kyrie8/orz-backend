@@ -10,7 +10,8 @@ WORKDIR /nestjs
 
 # 将根目录下的文件都copy到container（运行此镜像的容器）文件系统的文件夹下
 COPY . /nestjs
-
+RUN touch .env
+RUN echo "DB_HOST=127.0.0.0\nDB_PORT=3306\nDB_USER=root\nDB_PASSWORD=123456\nDB_DATABASE=nest\nSECRET=test123456" >> .env
 # 安装项目依赖包
 RUN npm install
 RUN npm run build
