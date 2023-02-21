@@ -39,7 +39,6 @@ export class RolesGuard implements CanActivate {
     const reg = /\/(user|role)\/\d/g;
     const reg2 = /\/user\/\d/g;
     if (+id === user.user_id && reg2.test(url) && 'DELETE' === method) {
-      console.log(1111, user);
       throw new HttpException('不可以删除自己', HttpStatus.BAD_REQUEST);
     }
     if (!user) {
