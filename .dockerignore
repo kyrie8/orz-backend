@@ -1,6 +1,5 @@
 /dist
 /node_modules
-Dockerfile
 logs
 *.log
 npm-debug.log*
