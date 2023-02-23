@@ -7,10 +7,10 @@ WORKDIR /nestjs
 COPY package*.json ./
 
 RUN touch .env
-RUN echo "DB_HOST=127.0.0.0\nDB_PORT=3306\nDB_USER=root\nDB_PASSWORD=123456\nDB_DATABASE=nest\nSECRET=test123456" >> .env
+RUN echo "DB_HOST=127.0.0.0\nDB_PORT=8090\nDB_USER=root\nDB_PASSWORD=123456\nDB_DATABASE=nest\nSECRET=test123456" >> .env
 # 安装项目依赖包
-COPY . ./
-RUN npm ci
+RUN npm install
+COPY . .
 RUN npm run build
 
 # 容器对外暴露的端口号
