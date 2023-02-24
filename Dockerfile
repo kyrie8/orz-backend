@@ -8,8 +8,8 @@ COPY package*.json ./
 #ENV HOST 0.0.0.0
 # 安装项目依赖包
 RUN npm install
-RUN npm run build
 COPY . .
+RUN npm run build
 # 容器对外暴露的端口号
 EXPOSE 3001
 
