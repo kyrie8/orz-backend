@@ -7,8 +7,8 @@ WORKDIR /nestjs
 COPY package*.json ./
 #ENV HOST 0.0.0.0
 # 安装项目依赖包
+COPY . ./
 RUN npm install
-COPY . .
 RUN npm run build
 # 容器对外暴露的端口号
 EXPOSE 3001
