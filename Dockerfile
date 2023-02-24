@@ -5,7 +5,6 @@ RUN mkdir -p /nestjs
 
 WORKDIR /nestjs
 COPY package*.json ./
-ENV HOST 0.0.0.0
 # 安装项目依赖包
 COPY . ./
 RUN npm install
