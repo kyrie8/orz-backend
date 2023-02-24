@@ -4,7 +4,7 @@ FROM node:18-alpine
 RUN mkdir -p /nestjs
 
 WORKDIR /nestjs
-# COPY package*.json ./
+COPY package*.json ./
 ENV HOST 0.0.0.0
 # 安装项目依赖包
 COPY . ./
