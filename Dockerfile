@@ -4,10 +4,9 @@ FROM node:18-alpine
 RUN mkdir -p /nestjs
 
 WORKDIR /nestjs
-COPY package*.json ./
+COPY . ./
 # 安装项目依赖包
 RUN npm install
-COPY . ./
 RUN npm run build
 # 容器对外暴露的端口号
 EXPOSE 3001
